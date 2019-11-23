@@ -1,0 +1,65 @@
+---
+title: "Top 50 Alpine peaks by elevation"
+author: "Peter Gajda"
+date: "23 November 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Description
+
+This is an an overview of the Top 50 Alpine peaks by elevation.
+You can find two maps generated with the leaflet package from R.
+
+The first one uses the clustering function in order to show the regions with an agglomeration of high mountain peaks.
+The second one shows the exact position of the mountains even from a higher zoom level. The colored markers provide information about the peak elevation.
+Both maps contain information about the mountain name, elevation and region within the tooltip.
+
+Data were used from wikipedia. More details are available here: <https://en.wikipedia.org/wiki/List_of_mountains_of_the_Alps_above_3000_m>.
+
+
+## Top 50 Alpine peaks by elevation - Clustered
+
+The map below shows the Top 50 Alpine peaks by elevation. The data is clustered and shows regions with more or less top peaks.
+
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+library(leaflet)
+lat_def <- c(45.8325, 45.93694444, 46.09388889, 45.92222222, 46.10138889, 45.97638889, 46.03416667, 45.9375, 46.53722222, 46.065, 45.86916667, 46.06305556, 46.02333333, 46.465, 46.01333333, 45.97, 45.94111111, 46.53666667, 45.93472222, 46.55833333, 44.9225, 46.59, 46.03861111, 45.51805556, 46.38222222, 46.55138889, 46.53194444, 46.12777778, 46.15722222, 46.36833333, 46.16805556, 46.51277778, 45.00472222, 46.5775, 45.59583333, 46.05194444, 44.885, 44.8975, 46.37361111, 46.39166667, 46.54666667, 45.79472222, 44.89333333, 46.49388889, 46.50888889, 45.96, 45.97916667, 45.91666667, 45.40527778, 46.47861111)
+lng_def <- c(6.864444444, 7.866944444, 7.858888889, 7.835555556, 7.715833333, 7.658611111, 7.611944444, 7.299166667, 8.126111111, 7.690277778, 6.988333333, 7.863888889, 7.884166667, 7.993888889, 7.901666667, 7.605277778, 7.748888889, 7.9625, 6.970277778, 7.997222222, 6.36, 8.118055556, 7.668055556, 7.267222222, 9.908055556, 8.061388889, 8.077777778, 8.012222222, 8.003055556, 9.931388889, 8.003333333, 7.967777778, 6.308611111, 8.005277778, 7.2575, 7.611388889, 6.356388889, 6.396666667, 9.883055556, 7.850833333, 8.015277778, 6.815, 6.383888889, 8.096944444, 10.54472222, 7.02, 7.400277778, 7.024444444, 6.827777778, 10.56833333)
+popup_def <- c("Mont Blanc / Monte Bianco (4808 m) - FR/IT - Mont Blanc massif - U-Savoy/Aosta Valley", "Monte Rosa / Mont Rose (Dufourspitze) (4634 m) - CH/IT - Monte Rosa Alps - Valais/Piedmont", "Dom (4545 m) - CH - Mischabel - Valais", "Lyskamm (4527 m) - CH/IT - Monte Rosa Alps - Valais/Aosta Valley", "Weisshorn (4506 m) - CH - Weisshorn-Matterhorn - Valais", "Matterhorn / Cervino / Cervin (4478 m) - CH/IT - Weisshorn-Matterhorn - Valais/Aosta Valley", "Dent Blanche (4357 m) - CH - Weisshorn-Matterhorn - Valais", "Grand Combin (4314 m) - CH - Grand Combin Alps - Valais", "Finsteraarhorn (4274 m) - CH - Bernese Alps - Bern/Valais", "Zinalrothorn (4221 m) - CH - Weisshorn-Matterhorn - Valais", "Grandes Jorasses (Pointe Walker) (4208 m) - FR/IT - Mont Blanc massif - U-Savoy/Aosta Valley", "Alphubel (4206 m) - CH - Mischabel - Valais", "Rimpfischhorn (4199 m) - CH - Mischabel - Valais", "Aletschhorn (4193 m) - CH - Bernese Alps - Valais", "Strahlhorn (4190 m) - CH - Mischabel - Valais", "Dent d'Hérens (4174 m) - CH/IT - Weisshorn-Matterhorn - Valais/Aosta Valley", "Breithorn (4164 m) - CH/IT - Monte Rosa Alps - Valais/Aosta Valley", "Jungfrau (4158 m) - CH - Bernese Alps - Bern/Valais", "Aiguille Verte (4122 m) - FR - Mont Blanc massif - Upper Savoy", "Mönch (4107 m) - CH - Bernese Alps - Bern/Valais", "Barre des Écrins (4102 m) - FR - Massif des Écrins - Hautes-Alpes", "Schreckhorn (4078 m) - CH - Bernese Alps - Bern", "Ober Gabelhorn (4063 m) - CH - Weisshorn-Matterhorn - Valais", "Gran Paradiso / Grand Paradis (4061 m) - IT - Gran Paradiso Alps - Aosta Valley", "Piz Bernina (4049 m) - CH - Bernina Range - Graubünden", "Gross Fiescherhorn (4049 m) - CH - Bernese Alps - Bern/Valais", "Gross Grünhorn (4044 m) - CH - Bernese Alps - Valais", "Weissmies (4017 m) - CH - Weissmies Alps - Valais", "Lagginhorn (4010 m) - CH - Weissmies Alps - Valais", "Piz Zupò (3996 m) - CH/IT - Bernina Range - Graub./Sondrio", "Fletschhorn (3985 m) - CH - Weissmies Alps - Valais", "Gletscherhorn (3983 m) - CH - Bernese Alps - Bern/Valais", "Meije (3982 m) - FR - Massif des Écrins - Isère/H-Alpes", "Eiger (3967 m) - CH - Bernese Alps - Bern", "Grivola (3969 m) - IT - Gran Paradiso Alps - Aosta Valley", "Grand Cornier (3962 m) - CH - Weisshorn-Matterhorn - Valais", "Ailefroide (3954 m) - FR - Massif des Écrins - Isère/H-Alpes", "Mont Pelvoux (3943 m) - FR - Massif des Écrins - Hautes-Alpes", "Piz Roseg (3937 m) - CH - Bernina Range - Graubünden", "Bietschhorn (3934 m) - CH - Bernese Alps - Valais", "Trugberg (3933 m) - CH - Bernese Alps - Valais", "Aiguille de Tré la Tête (3923 m) - IT - Mont Blanc massif - Aosta Valley", "Pic Sans Nom (3913 m) - FR - Massif des Écrins - Hautes-Alpes", "Gross Wannenhorn (3906 m) - CH - Bernese Alps - Valais", "Ortler (3905 m) - IT - Ortler Alps - South Tyrol", "Aiguille d'Argentière (3901 m) - CH/FR - Mont Blanc massif - Valais/U-Savoy", "Ruinette (3875 m) - CH - Grand Combin Alps - Valais", "Aiguille de Triolet (3870 m) - FR/IT - Mont Blanc massif - U-Savoy/Aosta Valley", "Grande Casse (3855 m) - FR - Vanoise massif - Savoy", "Königspitze / Gran Zebrù (3851 m) - IT - Ortler Alps - S-Tyrol/Sondrio")
+
+df <- data.frame(
+lat=lat_def, 
+lng=lng_def)
+
+
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(popup=popup_def, clusterOptions = markerClusterOptions() )
+```
+
+## Top 50 Alpine peaks by elevation - Unclustered
+
+The map below shows the Top 50 Alpine peaks by elevation. The markers are colored and inform you if the peak is in the Top 10, Top 20 and so in regards of elevation.
+
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+lat_def <- c(45.8325, 45.93694444, 46.09388889, 45.92222222, 46.10138889, 45.97638889, 46.03416667, 45.9375, 46.53722222, 46.065, 45.86916667, 46.06305556, 46.02333333, 46.465, 46.01333333, 45.97, 45.94111111, 46.53666667, 45.93472222, 46.55833333, 44.9225, 46.59, 46.03861111, 45.51805556, 46.38222222, 46.55138889, 46.53194444, 46.12777778, 46.15722222, 46.36833333, 46.16805556, 46.51277778, 45.00472222, 46.5775, 45.59583333, 46.05194444, 44.885, 44.8975, 46.37361111, 46.39166667, 46.54666667, 45.79472222, 44.89333333, 46.49388889, 46.50888889, 45.96, 45.97916667, 45.91666667, 45.40527778, 46.47861111)
+lng_def <- c(6.864444444, 7.866944444, 7.858888889, 7.835555556, 7.715833333, 7.658611111, 7.611944444, 7.299166667, 8.126111111, 7.690277778, 6.988333333, 7.863888889, 7.884166667, 7.993888889, 7.901666667, 7.605277778, 7.748888889, 7.9625, 6.970277778, 7.997222222, 6.36, 8.118055556, 7.668055556, 7.267222222, 9.908055556, 8.061388889, 8.077777778, 8.012222222, 8.003055556, 9.931388889, 8.003333333, 7.967777778, 6.308611111, 8.005277778, 7.2575, 7.611388889, 6.356388889, 6.396666667, 9.883055556, 7.850833333, 8.015277778, 6.815, 6.383888889, 8.096944444, 10.54472222, 7.02, 7.400277778, 7.024444444, 6.827777778, 10.56833333)
+popup_def <- c("Mont Blanc / Monte Bianco (4808 m) - FR/IT - Mont Blanc massif - U-Savoy/Aosta Valley", "Monte Rosa / Mont Rose (Dufourspitze) (4634 m) - CH/IT - Monte Rosa Alps - Valais/Piedmont", "Dom (4545 m) - CH - Mischabel - Valais", "Lyskamm (4527 m) - CH/IT - Monte Rosa Alps - Valais/Aosta Valley", "Weisshorn (4506 m) - CH - Weisshorn-Matterhorn - Valais", "Matterhorn / Cervino / Cervin (4478 m) - CH/IT - Weisshorn-Matterhorn - Valais/Aosta Valley", "Dent Blanche (4357 m) - CH - Weisshorn-Matterhorn - Valais", "Grand Combin (4314 m) - CH - Grand Combin Alps - Valais", "Finsteraarhorn (4274 m) - CH - Bernese Alps - Bern/Valais", "Zinalrothorn (4221 m) - CH - Weisshorn-Matterhorn - Valais", "Grandes Jorasses (Pointe Walker) (4208 m) - FR/IT - Mont Blanc massif - U-Savoy/Aosta Valley", "Alphubel (4206 m) - CH - Mischabel - Valais", "Rimpfischhorn (4199 m) - CH - Mischabel - Valais", "Aletschhorn (4193 m) - CH - Bernese Alps - Valais", "Strahlhorn (4190 m) - CH - Mischabel - Valais", "Dent d'Hérens (4174 m) - CH/IT - Weisshorn-Matterhorn - Valais/Aosta Valley", "Breithorn (4164 m) - CH/IT - Monte Rosa Alps - Valais/Aosta Valley", "Jungfrau (4158 m) - CH - Bernese Alps - Bern/Valais", "Aiguille Verte (4122 m) - FR - Mont Blanc massif - Upper Savoy", "Mönch (4107 m) - CH - Bernese Alps - Bern/Valais", "Barre des Écrins (4102 m) - FR - Massif des Écrins - Hautes-Alpes", "Schreckhorn (4078 m) - CH - Bernese Alps - Bern", "Ober Gabelhorn (4063 m) - CH - Weisshorn-Matterhorn - Valais", "Gran Paradiso / Grand Paradis (4061 m) - IT - Gran Paradiso Alps - Aosta Valley", "Piz Bernina (4049 m) - CH - Bernina Range - Graubünden", "Gross Fiescherhorn (4049 m) - CH - Bernese Alps - Bern/Valais", "Gross Grünhorn (4044 m) - CH - Bernese Alps - Valais", "Weissmies (4017 m) - CH - Weissmies Alps - Valais", "Lagginhorn (4010 m) - CH - Weissmies Alps - Valais", "Piz Zupò (3996 m) - CH/IT - Bernina Range - Graub./Sondrio", "Fletschhorn (3985 m) - CH - Weissmies Alps - Valais", "Gletscherhorn (3983 m) - CH - Bernese Alps - Bern/Valais", "Meije (3982 m) - FR - Massif des Écrins - Isère/H-Alpes", "Eiger (3967 m) - CH - Bernese Alps - Bern", "Grivola (3969 m) - IT - Gran Paradiso Alps - Aosta Valley", "Grand Cornier (3962 m) - CH - Weisshorn-Matterhorn - Valais", "Ailefroide (3954 m) - FR - Massif des Écrins - Isère/H-Alpes", "Mont Pelvoux (3943 m) - FR - Massif des Écrins - Hautes-Alpes", "Piz Roseg (3937 m) - CH - Bernina Range - Graubünden", "Bietschhorn (3934 m) - CH - Bernese Alps - Valais", "Trugberg (3933 m) - CH - Bernese Alps - Valais", "Aiguille de Tré la Tête (3923 m) - IT - Mont Blanc massif - Aosta Valley", "Pic Sans Nom (3913 m) - FR - Massif des Écrins - Hautes-Alpes", "Gross Wannenhorn (3906 m) - CH - Bernese Alps - Valais", "Ortler (3905 m) - IT - Ortler Alps - South Tyrol", "Aiguille d'Argentière (3901 m) - CH/FR - Mont Blanc massif - Valais/U-Savoy", "Ruinette (3875 m) - CH - Grand Combin Alps - Valais", "Aiguille de Triolet (3870 m) - FR/IT - Mont Blanc massif - U-Savoy/Aosta Valley", "Grande Casse (3855 m) - FR - Vanoise massif - Savoy", "Königspitze / Gran Zebrù (3851 m) - IT - Ortler Alps - S-Tyrol/Sondrio")
+color_def <- c("red", "red", "red", "red", "red", "red", "red", "red", "red", "red", "green", "green", "green", "green", "green", "green", "green", "green", "green", "green", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "yellow", "yellow", "yellow", "yellow", "yellow", "yellow", "yellow", "yellow", "yellow", "yellow", "orange", "orange", "orange", "orange", "orange", "orange", "orange", "orange", "orange", "orange")
+
+df <- data.frame(
+lat=lat_def, 
+lng=lng_def)
+
+
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(popup=popup_def, color=color_def, radius=10, weight=8) %>%
+  addLegend(labels = c("Top 01-10", "Top 11-20", "Top 21-30", "Top 31-40", "Top 41-50"), colors = c("red", "green", "blue", "yellow", "orange"))
+```
